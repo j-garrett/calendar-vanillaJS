@@ -1,0 +1,15 @@
+#calendar-container {
+  /*Let's worry about responsive after MVP*/
+  width: 400px;
+  border: 1px solid #c1c1c1;
+}
+#calendar-container :first-of-type {
+  border-top: 0px;
+}
+
+.calendar-time-block {
+  height: 25px;
+  width: 100%;
+  background-color: lightgrey;
+  border-top: 1px solid #c1c1c1;
+}
