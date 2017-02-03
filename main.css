@@ -1,6 +1,8 @@
 #calendar-container {
+  position: relative;
   /*Let's worry about responsive after MVP*/
-  width: 400px;
+  width: 100%;
+  max-width: 400px;
   border: 1px solid #c1c1c1;
 }
 #calendar-container :first-of-type {
@@ -12,4 +14,19 @@
   width: 100%;
   background-color: lightgrey;
   border-top: 1px solid #c1c1c1;
+}
+
+.calendar-event-container {
+  position: absolute;
+  top: 50px;
+  height: 100px;
+  width: 97%;
+  margin: 1%;
+  border: 1px solid black;
+}
+
+.calendar-event-entry {
+  background-color: white;
+  height: 25px;
+  width: 100%;
 }
