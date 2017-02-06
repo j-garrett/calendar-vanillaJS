@@ -56,11 +56,17 @@ class Calendar {
     }
   }
   updateStylingOnCollide(classesMap) {
-    console.log('this.data.arrayRepresentingTimeSlots: ', this.data.arrayRepresentingTimeSlots);
-    classesMap.forEach((val, key, map) => {
+    // console.log('this.data.arrayRepresentingTimeSlots: ', this.data.arrayRepresentingTimeSlots);
+    var key;
+    var val;
+    var indent = 0;
+    for (var entry of classesMap) {
+      key = entry[0];
+      val = entry[1];
       // Grab all class elements
-      var indent = 0;
       var nodes = document.getElementsByClassName(key);
+      console.log('key: ', key);
+      console.log('nodes to be moved: ', nodes);
       for (var i = 0; i < nodes.length; i += 1) {
         var node = nodes[i];
         // console.log('node: ', node);
@@ -68,12 +74,15 @@ class Calendar {
         // console.log('val: ', val);
         // console.log('(this.data.baseWidth / val): ', (this.data.baseWidth / val));
         var newWidth = this.data.baseWidth / val;
-        node.style.width = newWidth + 'px';
+        console.log('newWidth: ', newWidth);
+        node.style.width = newWidth - classesMap.size + 'px';
         // Now we need to set indent correctly
         // indent += 1;
-        // node.style.left = (newWidth * indent) + 'px';
+        console.log("(newWidth * indent) + 10 + 'px': ", (newWidth * indent) + 10 + 'px');
+        node.style.left = (newWidth * indent) + 10 + 'px';
+        indent += 1;
       }
-    });
+    }
   }
   setNodeWidth() {
 
