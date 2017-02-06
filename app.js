@@ -32,13 +32,20 @@ class Calendar {
   }
   createCalendarDiv() {
     // Build calendar blocks in ten minute increments
+    var minutes;
+    var meridiem;
+    var time;
     var dayLength = this.data.dayEnd - this.data.dayStart;
     var timeContainerEle = this.createDivWithClass('time-sections-container');
     this.data.calendarContainer.appendChild(timeContainerEle);
     // Iterate over how many blocks we need
     for (var i = 0; i < dayLength; i += 10) {
       var element = this.createDivWithClass('calendar-time-block');
-      element.innerText = i;
+      minutes = 900 + i + '';
+      meridiem = minutes >= 1200 ? 'pm' : 'am';
+      time = minutes.split('');
+      time.splice(-2, 0, ':');
+      element.innerText = time.join('') + ' ' + meridiem;
       timeContainerEle.appendChild(element);
     }
 
@@ -49,8 +56,8 @@ class Calendar {
     }
   }
   updateStylingOnCollide(classesMap) {
+    console.log('this.data.arrayRepresentingTimeSlots: ', this.data.arrayRepresentingTimeSlots);
     classesMap.forEach((val, key, map) => {
-      console.log('key: ', key);
       // Grab all class elements
       var indent = 0;
       var nodes = document.getElementsByClassName(key);
@@ -68,7 +75,13 @@ class Calendar {
       }
     });
   }
-  addCollisionToTracker(arr) {
+  setNodeWidth() {
+
+  }
+  setNodeOffsetTop() {
+
+  }
+  setNodeOffsetLeft() {
 
   }
   createEventBlock(event, idx) {
@@ -79,32 +92,27 @@ class Calendar {
     // divide end by 10 and go up to and include that child
     var entryContainerElement = this.createDivWithClass('calendar-event-container event-number-' + idx);
     var existingEntryCollisionTracker = new Map();
+    var bucket;
+    var timeSlot;
     for (var i = event.start / 10; i <= event.end / 10; i += 1) {
-      // Create a time slot !!! This may no longer be needed with new container style
-      var eventElement = this.createDivWithClass('calendar-event-entry');
       // Track where this element lies on the timetable using array quasi hash table style
       // If it's not an array yet, we need to initialize it
       if (this.data.arrayRepresentingTimeSlots[i] === undefined) {
         this.data.arrayRepresentingTimeSlots[i] = [];
       }
-      // Push refernce to this event into array slot
-      // console.log('this.data.arrayRepresentingTimeSlots: ', this.data.arrayRepresentingTimeSlots);
-      this.data.arrayRepresentingTimeSlots[i].push('event-number-' + idx);
-
-      // If the slot already exists there may be other values in it
-      // We need to use an object to track the division these need to be
       // Grab current calendar time slot which will have array of events at that time
-      var bucket = this.data.arrayRepresentingTimeSlots[i];
+      bucket = this.data.arrayRepresentingTimeSlots[i];
+      // Push reference to this event into array slot
+      bucket.push('event-number-' + idx);
       // iterate over bucket and track events inside that slot
       for (var j = 0; j < bucket.length; j += 1) {
-        var timeSlot = existingEntryCollisionTracker.get(bucket[j]);
+        timeSlot = existingEntryCollisionTracker.get(bucket[j]);
         if (timeSlot === undefined || timeSlot < bucket.length) {
           // If this not yet tracked or tracked value is smaller
           // initialize/update with current number of collisions
           existingEntryCollisionTracker.set(bucket[j], bucket.length);
         }
       }
-      entryContainerElement.appendChild(eventElement);
     }
     // we need to append first to iterate styling properly
     this.data.calendarContainer.appendChild(entryContainerElement);
@@ -112,9 +120,8 @@ class Calendar {
     this.updateStylingOnCollide(existingEntryCollisionTracker);
 
     // Set CSS based on values of passed in event and existing entry collisions
-    entryContainerElement.style.height = 25 * (((event.end + 10) - event.start) / 10 ) + 'px';
-    entryContainerElement.style.top = 25 * (event.start / 10) + 'px';
-    // Check if this
+    entryContainerElement.style.height = 10 * (((event.end + 10) - event.start) / 10 ) + 'px';
+    entryContainerElement.style.top = 10 * (event.start / 10) + 'px';
   }
 }
 
