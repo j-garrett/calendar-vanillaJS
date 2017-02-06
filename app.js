@@ -20,7 +20,7 @@ class Calendar {
       // If one index has two values in it, we will update that entry's id styling
       arrayRepresentingTimeSlots: [],
       // Set our base width for events
-      baseWidth: '592px',
+      baseWidth: 592,
     };
     this.createCalendarDiv();
     this.buildInitialCalendarEvents();
@@ -48,17 +48,28 @@ class Calendar {
       this.createEventBlock(this.data.events[i], i);
     }
   }
-  updateStylingOnCollide() {
-
+  updateStylingOnCollide(classesMap) {
+    classesMap.forEach((val, key, map) => {
+      console.log('key: ', key);
+      // Grab all class elements
+      var indent = 0;
+      var nodes = document.getElementsByClassName(key);
+      for (var i = 0; i < nodes.length; i += 1) {
+        var node = nodes[i];
+        // console.log('node: ', node);
+        // console.log('this.data.baseWidth: ', this.data.baseWidth);
+        // console.log('val: ', val);
+        // console.log('(this.data.baseWidth / val): ', (this.data.baseWidth / val));
+        var newWidth = this.data.baseWidth / val;
+        node.style.width = newWidth + 'px';
+        // Now we need to set indent correctly
+        // indent += 1;
+        // node.style.left = (newWidth * indent) + 'px';
+      }
+    });
   }
   addCollisionToTracker(arr) {
-    for (var i = 0; i < arr.length; i += 1) {
-      if (existingEntryCollisionTracker[arr[i]] === undefined || existingEntryCollisionTracker[arr[i]] < arr.length) {
-        // If this not yet tracked or tracked value is smaller
-        // initialize/update with current number of collisions
-        existingEntryCollisionTracker[arr[i]] = arr.length;
-      }
-    }
+
   }
   createEventBlock(event, idx) {
     // Math to find which calendar-time-blocks are concerned
@@ -67,7 +78,7 @@ class Calendar {
     // divide start by 10, start at that child
     // divide end by 10 and go up to and include that child
     var entryContainerElement = this.createDivWithClass('calendar-event-container event-number-' + idx);
-    var existingEntryCollisionTracker = {};
+    var existingEntryCollisionTracker = new Map();
     for (var i = event.start / 10; i <= event.end / 10; i += 1) {
       // Create a time slot !!! This may no longer be needed with new container style
       var eventElement = this.createDivWithClass('calendar-event-entry');
@@ -77,28 +88,32 @@ class Calendar {
         this.data.arrayRepresentingTimeSlots[i] = [];
       }
       // Push refernce to this event into array slot
-      console.log('this.data.arrayRepresentingTimeSlots: ', this.data.arrayRepresentingTimeSlots);
+      // console.log('this.data.arrayRepresentingTimeSlots: ', this.data.arrayRepresentingTimeSlots);
       this.data.arrayRepresentingTimeSlots[i].push('event-number-' + idx);
 
       // If the slot already exists there may be other values in it
       // We need to use an object to track the division these need to be
-      // Grab current array element
+      // Grab current calendar time slot which will have array of events at that time
       var bucket = this.data.arrayRepresentingTimeSlots[i];
-      // iterate over bucket and track events
+      // iterate over bucket and track events inside that slot
       for (var j = 0; j < bucket.length; j += 1) {
-        if (existingEntryCollisionTracker[bucket[j]] === undefined || existingEntryCollisionTracker[bucket[j]] < bucket.length) {
+        var timeSlot = existingEntryCollisionTracker.get(bucket[j]);
+        if (timeSlot === undefined || timeSlot < bucket.length) {
           // If this not yet tracked or tracked value is smaller
           // initialize/update with current number of collisions
-          existingEntryCollisionTracker[bucket[j]] = bucket.length;
+          existingEntryCollisionTracker.set(bucket[j], bucket.length);
         }
       }
-
       entryContainerElement.appendChild(eventElement);
     }
-    // Set CSS based on values of passed in event
+    // we need to append first to iterate styling properly
+    this.data.calendarContainer.appendChild(entryContainerElement);
+    // Iterate over collisions and update their css
+    this.updateStylingOnCollide(existingEntryCollisionTracker);
+
+    // Set CSS based on values of passed in event and existing entry collisions
     entryContainerElement.style.height = 25 * (((event.end + 10) - event.start) / 10 ) + 'px';
     entryContainerElement.style.top = 25 * (event.start / 10) + 'px';
-    this.data.calendarContainer.appendChild(entryContainerElement);
     // Check if this
   }
 }
