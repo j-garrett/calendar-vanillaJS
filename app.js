@@ -82,15 +82,16 @@ class Calendar {
 
       // If the slot already exists there may be other values in it
       // We need to use an object to track the division these need to be
+      // Grab current array element
       var bucket = this.data.arrayRepresentingTimeSlots[i];
-
-      // for (var i = 0; i < bucket.length; i += 1) {
-      //   if (existingEntryCollisionTracker[bucket[i]] === undefined || existingEntryCollisionTracker[bucket[i]] < bucket.length) {
-      //     // If this not yet tracked or tracked value is smaller
-      //     // initialize/update with current number of collisions
-      //     existingEntryCollisionTracker[bucket[i]] = bucket.length;
-      //   }
-      // }
+      // iterate over bucket and track events
+      for (var j = 0; j < bucket.length; j += 1) {
+        if (existingEntryCollisionTracker[bucket[j]] === undefined || existingEntryCollisionTracker[bucket[j]] < bucket.length) {
+          // If this not yet tracked or tracked value is smaller
+          // initialize/update with current number of collisions
+          existingEntryCollisionTracker[bucket[j]] = bucket.length;
+        }
+      }
 
       entryContainerElement.appendChild(eventElement);
     }
