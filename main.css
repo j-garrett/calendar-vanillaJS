@@ -1,8 +1,8 @@
 #calendar-container {
   position: relative;
-  /*Let's worry about responsive after MVP*/
-  width: 100%;
-  max-width: 400px;
+  width: 600px;
+  height: 720px;
+  padding: 0 10px 0 10px;
   border: 1px solid #c1c1c1;
 }
 #calendar-container :first-of-type {
@@ -20,8 +20,8 @@
   position: absolute;
   top: 50px;
   height: 100px;
-  width: 97%;
-  margin: 1%;
+  width: 592px;
+  margin: 3px;
   border: 1px solid black;
 }
 

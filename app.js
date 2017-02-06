@@ -19,6 +19,8 @@ class Calendar {
       // We will have an array of pointers to dom elements inside these indexes
       // If one index has two values in it, we will update that entry's id styling
       arrayRepresentingTimeSlots: [],
+      // Set our base width for events
+      baseWidth: '592px',
     };
     this.createCalendarDiv();
     this.buildInitialCalendarEvents();
@@ -36,6 +38,7 @@ class Calendar {
     // Iterate over how many blocks we need
     for (var i = 0; i < dayLength; i += 10) {
       var element = this.createDivWithClass('calendar-time-block');
+      element.innerText = i;
       timeContainerEle.appendChild(element);
     }
 
@@ -45,6 +48,18 @@ class Calendar {
       this.createEventBlock(this.data.events[i], i);
     }
   }
+  updateStylingOnCollide() {
+
+  }
+  addCollisionToTracker(arr) {
+    for (var i = 0; i < arr.length; i += 1) {
+      if (existingEntryCollisionTracker[arr[i]] === undefined || existingEntryCollisionTracker[arr[i]] < arr.length) {
+        // If this not yet tracked or tracked value is smaller
+        // initialize/update with current number of collisions
+        existingEntryCollisionTracker[arr[i]] = arr.length;
+      }
+    }
+  }
   createEventBlock(event, idx) {
     // Math to find which calendar-time-blocks are concerned
     // 0 child is 9:00 and 1 child is 9:10
@@ -52,13 +67,34 @@ class Calendar {
     // divide start by 10, start at that child
     // divide end by 10 and go up to and include that child
     var entryContainerElement = this.createDivWithClass('calendar-event-container event-number-' + idx);
+    var existingEntryCollisionTracker = {};
     for (var i = event.start / 10; i <= event.end / 10; i += 1) {
-      // We are going to put something in each portion
-      // We will use pseudo selectors to style appropriately
+      // Create a time slot !!! This may no longer be needed with new container style
       var eventElement = this.createDivWithClass('calendar-event-entry');
+      // Track where this element lies on the timetable using array quasi hash table style
+      // If it's not an array yet, we need to initialize it
+      if (this.data.arrayRepresentingTimeSlots[i] === undefined) {
+        this.data.arrayRepresentingTimeSlots[i] = [];
+      }
+      // Push refernce to this event into array slot
+      console.log('this.data.arrayRepresentingTimeSlots: ', this.data.arrayRepresentingTimeSlots);
+      this.data.arrayRepresentingTimeSlots[i].push('event-number-' + idx);
+
+      // If the slot already exists there may be other values in it
+      // We need to use an object to track the division these need to be
+      var bucket = this.data.arrayRepresentingTimeSlots[i];
+
+      // for (var i = 0; i < bucket.length; i += 1) {
+      //   if (existingEntryCollisionTracker[bucket[i]] === undefined || existingEntryCollisionTracker[bucket[i]] < bucket.length) {
+      //     // If this not yet tracked or tracked value is smaller
+      //     // initialize/update with current number of collisions
+      //     existingEntryCollisionTracker[bucket[i]] = bucket.length;
+      //   }
+      // }
+
       entryContainerElement.appendChild(eventElement);
     }
-    // Set CSS based on values of based in event
+    // Set CSS based on values of passed in event
     entryContainerElement.style.height = 25 * (((event.end + 10) - event.start) / 10 ) + 'px';
     entryContainerElement.style.top = 25 * (event.start / 10) + 'px';
     this.data.calendarContainer.appendChild(entryContainerElement);
@@ -69,6 +105,8 @@ class Calendar {
 var layOutDay = function(events) {
   // First we will clear any existing elements in calendar container
   // Then create a new calendar with inputs
-  console.log('by golly we loaded!');
-  var calendar = new Calendar([ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ]);
+  var calendar = new Calendar(events);
 };
+// LAYOUT DAY IS BEING CALLED INSIDE index.html body onload attr
+
+// layOutDay([ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ]);
