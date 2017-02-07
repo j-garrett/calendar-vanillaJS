@@ -160,8 +160,8 @@ class Calendar {
     this.updateStylingOnCollide(existingEntryCollisionTracker);
 
     // Set CSS based on values of passed in event and existing entry collisions
-    entryContainerElement.style.height = 20 * (((event.end + 10) - event.start) / 10 ) + 'px';
-    entryContainerElement.style.top = 20 * (event.start / 10) + 'px';
+    entryContainerElement.style.height = 10 * (((event.end + 10) - event.start) / 10 ) + 'px';
+    entryContainerElement.style.top = 10 * (event.start / 10) + 'px';
   }
 }
 
