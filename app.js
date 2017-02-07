@@ -56,31 +56,47 @@ class Calendar {
     }
   }
   updateStylingOnCollide(classesMap) {
+    console.log('updateStylingOnCollide called');
     // console.log('this.data.arrayRepresentingTimeSlots: ', this.data.arrayRepresentingTimeSlots);
     var key;
     var val;
-    var indent = 0;
+    var nodes;
+    var node;
+    var indent = 10;
     for (var entry of classesMap) {
       key = entry[0];
       val = entry[1];
       // Grab all class elements
-      var nodes = document.getElementsByClassName(key);
-      console.log('key: ', key);
-      console.log('nodes to be moved: ', nodes);
+      nodes = document.getElementsByClassName(key);
+      // console.log('key: ', key);
+      // console.log('nodes to be moved: ', nodes);
       for (var i = 0; i < nodes.length; i += 1) {
-        var node = nodes[i];
-        // console.log('node: ', node);
+        node = nodes[i];
+        console.log('node: ', node);
+        console.log('node style left val: ', node.style.left);
         // console.log('this.data.baseWidth: ', this.data.baseWidth);
         // console.log('val: ', val);
         // console.log('(this.data.baseWidth / val): ', (this.data.baseWidth / val));
         var newWidth = this.data.baseWidth / val;
-        console.log('newWidth: ', newWidth);
         node.style.width = newWidth - classesMap.size + 'px';
         // Now we need to set indent correctly
         // indent += 1;
-        console.log("(newWidth * indent) + 10 + 'px': ", (newWidth * indent) + 10 + 'px');
-        node.style.left = (newWidth * indent) + 10 + 'px';
-        indent += 1;
+        // console.log("(newWidth * indent) + 10 + 'px': ", (newWidth * indent) + 10 + 'px');
+        // We don't want to update an indent that already exists (unless removing elements)
+        // If left isn't set we initialize to 10
+        if (node.style.left === '' || node.style.left === '10px') {
+          node.style.left = indent + 'px';
+          indent += newWidth;
+
+        }
+        if (node.style.left > newWidth) {
+          node.style.left = newWidth;
+          indent += newWidth;
+        }
+        // We need to track which elements occur first
+        // We are overwriting correct stylings from previous collision detection
+        console.log('node style left val: ', node.style.left);
+
       }
     }
   }
