@@ -95,7 +95,6 @@ class Calendar {
         // console.log("(newWidth * indent) + 10 + 'px': ", (newWidth * indent) + 10 + 'px');
         // We don't want to update an indent that already exists (unless removing elements)
         // If left isn't set we initialize to 10
-        console.log('node.dataset.alreadyIndented: ', node.dataset.alreadyIndented === 'alreadyIndented');
         if (node.dataset.alreadyIndented !== 'alreadyIndented' || node.style.left === '10px') {
           console.log('node.style.left unset if statement');
           node.dataset.alreadyIndented = 'alreadyIndented';
@@ -110,19 +109,11 @@ class Calendar {
         // We need to track which elements occur first
         // We are overwriting correct stylings from previous collision detection
         // Can we store values
+        console.log('indent val: ', indent);
         console.log('node style left val: ', node.style.left);
 
       }
     }
-  }
-  setNodeWidth() {
-
-  }
-  setNodeOffsetTop() {
-
-  }
-  setNodeOffsetLeft() {
-
   }
   createEventBlock(event, idx) {
     // Math to find which calendar-time-blocks are concerned
@@ -134,7 +125,7 @@ class Calendar {
     var existingEntryCollisionTracker = new Map();
     var bucket;
     var timeSlot;
-    for (var i = event.start / 10; i < event.end / 10; i += 1) {
+    for (var i = event.start; i < event.end; i += 1) {
       // Track where this element lies on the timetable using array quasi hash table style
       // If it's not an array yet, we need to initialize it
       if (this.data.arrayRepresentingTimeSlots[i] === undefined) {
@@ -162,15 +153,14 @@ class Calendar {
     // Set CSS based on values of passed in event and existing entry collisions
     entryContainerElement.style.height = 10 * (((event.end + 10) - event.start) / 10 ) + 'px';
     entryContainerElement.style.top = 10 * (event.start / 10) + 'px';
+    console.log('timeslots: ', this.data.arrayRepresentingTimeSlots);
   }
 }
 
 var layOutDay = function(events) {
   // First we will clear any existing elements in calendar container
-  // Then create a new calendar with inputs
   document.getElementById('calendar-container').innerHTML = '';
+  // Then create a new calendar with inputs
   var calendar = new Calendar(events);
 };
 // LAYOUT DAY IS BEING CALLED INSIDE index.html body onload attr
-
-// layOutDay([ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ]);
