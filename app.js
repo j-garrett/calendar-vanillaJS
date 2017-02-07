@@ -1,8 +1,3 @@
-/*
-Event input example:
-[ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
-*/
-
 class Calendar {
   constructor(events) {
     this.data = {
@@ -31,22 +26,16 @@ class Calendar {
     return element;
   }
   createCalendarDiv() {
-    // Build calendar blocks in ten minute increments
-    var minutes;
-    var meridiem;
-    var time;
     var dayLength = this.data.dayEnd - this.data.dayStart;
     var timeContainerEle = this.createDivWithClass('time-sections-container');
     this.data.calendarContainer.appendChild(timeContainerEle);
-    // Iterate over how many blocks we need
-    for (var i = 0; i < dayLength; i += 10) {
+    var humanTime = ['9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30'];
+    for (var i = 0, j = 0; i < dayLength; i += 30) {
       var element = this.createDivWithClass('calendar-time-block');
-      minutes = 900 + i + '';
-      meridiem = minutes >= 1200 ? 'pm' : 'am';
-      time = minutes.split('');
-      time.splice(-2, 0, ':');
-      // element.innerText = time.join('') + ' ' + meridiem;
-      element.innerText = i;
+      if (i % 30 === 0) {
+        element.innerHTML = '<div class="time-stamp">' + humanTime[j] + '</div>';
+        j += 1;
+      }
       timeContainerEle.appendChild(element);
     }
 
@@ -57,70 +46,41 @@ class Calendar {
     }
   }
   updateStylingOnCollide(classesMap) {
-    console.log('updateStylingOnCollide called');
-    // console.log('this.data.arrayRepresentingTimeSlots: ', this.data.arrayRepresentingTimeSlots);
     var key;
     var val;
     var nodes;
     var node;
     var indent = 10;
-    // If the first element in map (assuming map is organized by start times) already has a width then we know that the max width of all following cannot be larger, right?
-    // This won't necessarily work when the third calendar item is being odd about overlapping
     var maxWidth = this.data.baseWidth;
     for (var entry of classesMap) {
       key = entry[0];
       val = entry[1];
       // Grab all class elements
       nodes = document.getElementsByClassName(key);
-      // console.log('key: ', key);
-      // console.log('nodes to be moved: ', nodes);
       for (var i = 0; i < nodes.length; i += 1) {
         // we want constrained width for certain scenarios so we do that here!
         if (nodes[i].style.width !== '') {
           maxWidth = Math.min(nodes[i].style.width.slice(0, -2), maxWidth);
         }
         node = nodes[i];
-        console.log('node: ', node);
-        console.log('indent val: ', indent);
-        console.log('node style left val: ', node.style.left);
-        // console.log('this.data.baseWidth: ', this.data.baseWidth);
-        // console.log('val: ', val);
-        // console.log('(this.data.baseWidth / val): ', (this.data.baseWidth / val));
         var newWidth = Math.floor(this.data.baseWidth / val);
         if (node.style.width === '' || node.style.width.slice(0, -2) > newWidth) {
           node.style.width = Math.min(maxWidth, newWidth - classesMap.size) + 'px';
         }
         // Now we need to set indent correctly
-        // indent += 1;
-        // console.log("(newWidth * indent) + 10 + 'px': ", (newWidth * indent) + 10 + 'px');
-        // We don't want to update an indent that already exists (unless removing elements)
-        // If left isn't set we initialize to 10
         if (node.dataset.alreadyIndented !== 'alreadyIndented' || node.style.left === '10px') {
-          console.log('node.style.left unset if statement');
           node.dataset.alreadyIndented = 'alreadyIndented';
           node.style.left = indent + 'px';
           indent += newWidth;
         } else if (node.style.left.slice(0, -2) > newWidth) {
-          console.log('node.style.left too large if statement');
           node.style.left = indent + 'px';
           indent += newWidth;
           node.dataset.alreadyIndented = 'alreadyIndented';
         }
-        // We need to track which elements occur first
-        // We are overwriting correct stylings from previous collision detection
-        // Can we store values
-        console.log('indent val: ', indent);
-        console.log('node style left val: ', node.style.left);
-
       }
     }
   }
   createEventBlock(event, idx) {
-    // Math to find which calendar-time-blocks are concerned
-    // 0 child is 9:00 and 1 child is 9:10
-    // event.start of 30 makes it 9:30
-    // divide start by 10, start at that child
-    // divide end by 10 and go up to and include that child
     var entryContainerElement = this.createDivWithClass('calendar-event-container event-number-' + idx);
     var existingEntryCollisionTracker = new Map();
     var bucket;
@@ -153,7 +113,6 @@ class Calendar {
     // Set CSS based on values of passed in event and existing entry collisions
     entryContainerElement.style.height = 10 * (((event.end + 10) - event.start) / 10 ) + 'px';
     entryContainerElement.style.top = 10 * (event.start / 10) + 'px';
-    console.log('timeslots: ', this.data.arrayRepresentingTimeSlots);
   }
 }
 
