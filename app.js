@@ -45,7 +45,8 @@ class Calendar {
       meridiem = minutes >= 1200 ? 'pm' : 'am';
       time = minutes.split('');
       time.splice(-2, 0, ':');
-      element.innerText = time.join('') + ' ' + meridiem;
+      // element.innerText = time.join('') + ' ' + meridiem;
+      element.innerText = i;
       timeContainerEle.appendChild(element);
     }
 
@@ -74,6 +75,7 @@ class Calendar {
       // console.log('key: ', key);
       // console.log('nodes to be moved: ', nodes);
       for (var i = 0; i < nodes.length; i += 1) {
+        // we want constrained width for certain scenarios so we do that here!
         if (nodes[i].style.width !== '') {
           maxWidth = Math.min(nodes[i].style.width.slice(0, -2), maxWidth);
         }
@@ -93,14 +95,17 @@ class Calendar {
         // console.log("(newWidth * indent) + 10 + 'px': ", (newWidth * indent) + 10 + 'px');
         // We don't want to update an indent that already exists (unless removing elements)
         // If left isn't set we initialize to 10
-        if (node.style.left === '' || node.style.left === '10px') {
+        console.log('node.dataset.alreadyIndented: ', node.dataset.alreadyIndented === 'alreadyIndented');
+        if (node.dataset.alreadyIndented !== 'alreadyIndented' || node.style.left === '10px') {
           console.log('node.style.left unset if statement');
+          node.dataset.alreadyIndented = 'alreadyIndented';
           node.style.left = indent + 'px';
           indent += newWidth;
         } else if (node.style.left.slice(0, -2) > newWidth) {
           console.log('node.style.left too large if statement');
           node.style.left = indent + 'px';
           indent += newWidth;
+          node.dataset.alreadyIndented = 'alreadyIndented';
         }
         // We need to track which elements occur first
         // We are overwriting correct stylings from previous collision detection
@@ -129,7 +134,7 @@ class Calendar {
     var existingEntryCollisionTracker = new Map();
     var bucket;
     var timeSlot;
-    for (var i = event.start / 10; i <= event.end / 10; i += 1) {
+    for (var i = event.start / 10; i < event.end / 10; i += 1) {
       // Track where this element lies on the timetable using array quasi hash table style
       // If it's not an array yet, we need to initialize it
       if (this.data.arrayRepresentingTimeSlots[i] === undefined) {
@@ -155,14 +160,15 @@ class Calendar {
     this.updateStylingOnCollide(existingEntryCollisionTracker);
 
     // Set CSS based on values of passed in event and existing entry collisions
-    entryContainerElement.style.height = 10 * (((event.end + 10) - event.start) / 10 ) + 'px';
-    entryContainerElement.style.top = 10 * (event.start / 10) + 'px';
+    entryContainerElement.style.height = 20 * (((event.end + 10) - event.start) / 10 ) + 'px';
+    entryContainerElement.style.top = 20 * (event.start / 10) + 'px';
   }
 }
 
 var layOutDay = function(events) {
   // First we will clear any existing elements in calendar container
   // Then create a new calendar with inputs
+  document.getElementById('calendar-container').innerHTML = '';
   var calendar = new Calendar(events);
 };
 // LAYOUT DAY IS BEING CALLED INSIDE index.html body onload attr

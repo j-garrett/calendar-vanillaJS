@@ -5,15 +5,13 @@
   padding: 0 10px 0 10px;
   border: 1px solid #c1c1c1;
 }
-#calendar-container :first-of-type {
-  border-top: 0px;
-}
 
 .calendar-time-block {
   height: 10px;
   width: 100%;
   background-color: lightgrey;
   border-top: 1px solid #c1c1c1;
+  margin-top: -1px;
 }
 
 .calendar-event-container {
@@ -21,7 +19,7 @@
   top: 50px;
   height: 100px;
   /*width: 592px;*/
-  margin: 3px;
+  margin: 0 3px;
   border: 1px solid black;
   background-color: hsla(242, 100%, 50%, 0.42);
 }
