@@ -73,12 +73,15 @@ class Calendar {
       for (var i = 0; i < nodes.length; i += 1) {
         node = nodes[i];
         console.log('node: ', node);
+        console.log('indent val: ', indent);
         console.log('node style left val: ', node.style.left);
         // console.log('this.data.baseWidth: ', this.data.baseWidth);
         // console.log('val: ', val);
         // console.log('(this.data.baseWidth / val): ', (this.data.baseWidth / val));
-        var newWidth = this.data.baseWidth / val;
-        node.style.width = newWidth - classesMap.size + 'px';
+        var newWidth = Math.floor(this.data.baseWidth / val);
+        if (node.style.width === '' || node.style.width.slice(0, -2) > newWidth) {
+          node.style.width = newWidth - classesMap.size + 'px';
+        }
         // Now we need to set indent correctly
         // indent += 1;
         // console.log("(newWidth * indent) + 10 + 'px': ", (newWidth * indent) + 10 + 'px');
@@ -87,14 +90,13 @@ class Calendar {
         if (node.style.left === '' || node.style.left === '10px') {
           node.style.left = indent + 'px';
           indent += newWidth;
-
-        }
-        if (node.style.left > newWidth) {
-          node.style.left = newWidth;
+        } else if (node.style.left.slice(0, -2) > newWidth) {
+          node.style.left = indent + 'px';
           indent += newWidth;
         }
         // We need to track which elements occur first
         // We are overwriting correct stylings from previous collision detection
+        // Can we store values
         console.log('node style left val: ', node.style.left);
 
       }
