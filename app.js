@@ -63,6 +63,9 @@ class Calendar {
     var nodes;
     var node;
     var indent = 10;
+    // If the first element in map (assuming map is organized by start times) already has a width then we know that the max width of all following cannot be larger, right?
+    // This won't necessarily work when the third calendar item is being odd about overlapping
+    var maxWidth = this.data.baseWidth;
     for (var entry of classesMap) {
       key = entry[0];
       val = entry[1];
@@ -71,6 +74,9 @@ class Calendar {
       // console.log('key: ', key);
       // console.log('nodes to be moved: ', nodes);
       for (var i = 0; i < nodes.length; i += 1) {
+        if (nodes[i].style.width !== '') {
+          maxWidth = Math.min(nodes[i].style.width.slice(0, -2), maxWidth);
+        }
         node = nodes[i];
         console.log('node: ', node);
         console.log('indent val: ', indent);
@@ -80,7 +86,7 @@ class Calendar {
         // console.log('(this.data.baseWidth / val): ', (this.data.baseWidth / val));
         var newWidth = Math.floor(this.data.baseWidth / val);
         if (node.style.width === '' || node.style.width.slice(0, -2) > newWidth) {
-          node.style.width = newWidth - classesMap.size + 'px';
+          node.style.width = Math.min(maxWidth, newWidth - classesMap.size) + 'px';
         }
         // Now we need to set indent correctly
         // indent += 1;
@@ -88,9 +94,11 @@ class Calendar {
         // We don't want to update an indent that already exists (unless removing elements)
         // If left isn't set we initialize to 10
         if (node.style.left === '' || node.style.left === '10px') {
+          console.log('node.style.left unset if statement');
           node.style.left = indent + 'px';
           indent += newWidth;
         } else if (node.style.left.slice(0, -2) > newWidth) {
+          console.log('node.style.left too large if statement');
           node.style.left = indent + 'px';
           indent += newWidth;
         }
